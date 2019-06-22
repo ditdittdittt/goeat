@@ -1,0 +1,37 @@
+Orderan ke: 1
+Restaurant: Hanamasa
+Driver: Ipin
+Your Item:
+Name|Price|Quantity|Delivery Fee
+Shrimp|10|2|10
+Meat|20|3|20
+Beef|30|4|30
+Total Price: 260
+Routes:
+To store,[[7, 8], [8, 8], [9, 8], [10, 8]]
+To user,[[11, 8], [12, 8], [13, 8], [14, 8], [15, 8], [16, 8], [16, 9], [16, 10], [16, 11], [16, 12], [16, 13], [16, 14], [16, 15], [16, 16], [16, 17], [16, 18], [16, 19]]
+
+Orderan ke: 2
+Restaurant: Shabu Hachi
+Driver: Jarjit
+Your Item:
+Name|Price|Quantity|Delivery Fee
+Shabu|5|3|45
+Soup|7|2|63
+Tempura|9|5|81
+Total Price: 263
+Routes:
+To store,[[7, 8], [8, 8], [9, 8], [10, 8]]
+To user,[[11, 8], [12, 8], [13, 8], [14, 8], [15, 8], [16, 8], [16, 9], [16, 10], [16, 11], [16, 12], [16, 13], [16, 14], [16, 15], [16, 16], [16, 17], [16, 18], [16, 19]]
+
+Orderan ke: 3
+Restaurant: Pak Gembus
+Driver: Upin
+Your Item:
+Name|Price|Quantity|Delivery Fee
+Ayam Paha|12|2|204
+Total Price: 228
+Routes:
+To store,[[7, 8], [8, 8], [9, 8], [10, 8]]
+To user,[[11, 8], [12, 8], [13, 8], [14, 8], [15, 8], [16, 8], [16, 9], [16, 10], [16, 11], [16, 12], [16, 13], [16, 14], [16, 15], [16, 16], [16, 17], [16, 18], [16, 19]]
+
