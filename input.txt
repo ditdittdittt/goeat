@@ -1,0 +1,23 @@
+25
+10,10
+4
+Spiderman,3,5
+Captain America,5,7
+Black Panther,15,15
+Black Widow,19,23
+3
+Sushi Tei,25,25
+2
+Ikan Kembung,25
+Ikan Laut,20
+Yoshinoya,13,15
+3
+Tempura,9
+Ebi Furai,11
+Yakiniku,13
+Mujigae,23,9
+4
+Ramyeon,6
+Topoki,8
+Bibimbab,4
+Kimchi,2

@@ -5,7 +5,7 @@ options = {}
 
 OptionParser.new do |parser|
 
-  parser.banner = "Usage: go_eat_v2.rb [options]"
+  parser.banner = "Usage: go_eat_v3.rb [options]"
 
   parser.on("-h", "--help", "Show this help message") do ||
     puts parser
@@ -23,6 +23,10 @@ OptionParser.new do |parser|
   parser.on("-p", "--position X,Y",Array, "The user's coordinate.") do |p|
     options[:x_axis] = p[0].to_i
     options[:y_axis] = p[1].to_i
+  end
+
+  parser.on("-f", "--file Filename", "The name of input file.") do |f|
+    options[:input_file] = f
   end
 
 end.parse!
@@ -99,8 +103,12 @@ class User
             puts "#{i+1}. #{store.store_name}"
             i+=1
         end
+        puts "0. Exit"
         puts "Insert the number:"
         user_choice_index = gets.chomp.to_i
+        if user_choice_index == 0
+            exit
+        end
         choosen_store = stores[user_choice_index-1]
         puts "You choose #{choosen_store.store_name}"
         puts "\n"
@@ -463,32 +471,123 @@ def ask_repeat_order
     repeat_order
 end
 
+def read_map_size(file)
+    map_size = file.gets.chomp.to_i
+    map_size
+end
+
+def generate_user_with_data(file)
+    coordinate = file.gets.chomp.split(",")
+    user = User.new(coordinate[0].to_i,coordinate[1].to_i)
+    user
+end
+
+def read_drivers_total(file)
+    drivers_total = file.gets.chomp.to_i
+    drivers_total
+end
+
+def generate_drivers_with_data(total,file)
+    drivers = Array.new(total)
+    for i in 0..total-1
+        driver_data = file.gets.chomp.split(",")
+        drivers[i] = Driver.new(driver_data[0],driver_data[1].to_i,driver_data[2].to_i)
+    end
+    drivers
+end
+
+def read_stores_total(file)
+    stores_total = file.gets.chomp.to_i
+    stores_total
+end
+
+def generate_stores_with_data(total,file)
+    stores = Array.new(total)
+    for i in 0..total-1
+        store_data = file.gets.chomp.split(",")
+        stores[i] = Store.new(store_data[0],store_data[1].to_i,store_data[2].to_i)
+        #puts "#{stores[i].store_name},#{stores[i].x_axis},#{stores[i].y_axis}"
+        store_menu_total = file.gets.chomp.to_i
+        menus = {}
+        for j in 0..store_menu_total-1
+            menu_data = file.gets.chomp.split(",")
+            menus[menu_data[0]] = menu_data[1].to_i
+        end
+        stores[i].generate_menu(menus)
+    end
+    stores
+end
+
+
 #Main Application
-#If have 3 arguments
-if options[:map] && options[:x_axis] && options[:y_axis]
+
+if options[:map] && options[:x_axis] && options[:y_axis] #If have 3 arguments
+
     #Define map
     map = Map.new(options[:map])
     map_size = map.map_size
     user_map = map.map
+
+    #Define user
     user = generate_user(map_size,options[:x_axis],options[:y_axis])
-else
+    user_map = user.generate_location(user_map)
+
+    #Define drivers
+    drivers = generate_driver(map_size)
+    user_map = generate_driver_location(drivers,user_map)
+
+    #Define stores
+    stores = generate_store(map_size)
+    user_map = generate_store_location(stores,user_map)
+
+elsif options[:input_file] #If file as arguments
+    #Read file
+    file = File.open('input.txt','r')
+
+    #Define map
+    size = read_map_size(file)
+    map = Map.new(size)
+    map_size = map.map_size
+    user_map = map.map
+
+    #Define user
+    user = generate_user_with_data(file)
+    user_map = user.generate_location(user_map)
+
+    #Define drivers
+    total_drivers = read_drivers_total(file)
+    drivers = generate_drivers_with_data(total_drivers,file)
+    user_map = generate_driver_location(drivers,user_map)
+
+    #Define stores
+    total_stores = read_stores_total(file)
+    stores = generate_stores_with_data(total_stores,file)
+    user_map = generate_store_location(stores,user_map)
+
+    #Close file
+    file.close
+
+else #If have no arguments
+
     #Define map
     map = Map.new()
     map_size = map.map_size
     user_map = map.map
+
+    #Define user
     user = generate_user(map_size)
+    user_map = user.generate_location(user_map)
+
+    #Define drivers
+    drivers = generate_driver(map_size)
+    user_map = generate_driver_location(drivers,user_map)
+
+    #Define stores
+    stores = generate_store(map_size)
+    user_map = generate_store_location(stores,user_map)
+
 end
 
-#Define user
-user_map = user.generate_location(user_map)
-
-#Define drivers
-drivers = generate_driver(map_size)
-user_map = generate_driver_location(drivers,user_map)
-
-#Define stores
-stores = generate_store(map_size)
-user_map = generate_store_location(stores,user_map)
 
 #Repeat order
 repeat_order = true
