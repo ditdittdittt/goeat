@@ -37,7 +37,7 @@ You are going to make a command line app called “Go-Eat”. The app consists o
 ### Notes:
 - The app can be executed with no arguments
 - The app can be executed with 3 arguments, if only 1 argument the app will be executed with no arguments
-- Usage: go_eat.rb [options]
+- Usage: go_eat.rb [options]<br />
 -h, --help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Show this help message <br />
 -m, --map MAP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The size of the generated map.<br />
 -p, --position X,Y &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The user's coordinate.
