@@ -1,12 +1,12 @@
 25
 10,10
 4
-Spiderman,3,5
-Captain America,5,7
-Black Panther,15,15
-Black Widow,19,23
+Spiderman,9,10
+Captain America,11,10
+Black Panther,10,9
+Black Widow,10,11
 3
-Sushi Tei,25,25
+Sushi Tei,24,24
 2
 Ikan Kembung,25
 Ikan Laut,20

@@ -1,39 +1,12 @@
 Orderan ke: 1
-Restaurant: Sushi Tei
-Driver: Black Widow
+Restaurant: Shabu hachi
+Driver: Jarjit
 Your Item:
 Name|Price|Quantity|Delivery Fee
-Ikan Kembung|25|1|750
-Ikan Laut|20|2|600
-Total Price: 1415
+Shabu|5|3|65
+Soup|7|3|91
+Total Price: 192
 Routes:
-To store,[[15, 15], [16, 15], [17, 15], [18, 15], [19, 15], [20, 15], [21, 15], [22, 15], [23, 15], [23, 14], [23, 13], [23, 12], [23, 11], [23, 10]]
-To user,[[23, 9], [22, 9], [21, 9], [20, 9], [19, 9], [18, 9], [17, 9], [16, 9], [15, 9], [14, 9], [13, 9], [12, 9], [11, 9], [10, 9]]
-
-Orderan ke: 2
-Restaurant: Yoshinoya
-Driver: Black Panther
-Your Item:
-Name|Price|Quantity|Delivery Fee
-Tempura|9|3|72
-Ebi Furai|11|2|88
-Yakiniku|13|2|104
-Total Price: 339
-Routes:
-To store,[[15, 15], [16, 15], [17, 15], [18, 15], [19, 15], [20, 15], [21, 15], [22, 15], [23, 15], [23, 14], [23, 13], [23, 12], [23, 11], [23, 10]]
-To user,[[23, 9], [22, 9], [21, 9], [20, 9], [19, 9], [18, 9], [17, 9], [16, 9], [15, 9], [14, 9], [13, 9], [12, 9], [11, 9], [10, 9]]
-
-Orderan ke: 3
-Restaurant: Mujigae
-Driver: Black Panther
-Your Item:
-Name|Price|Quantity|Delivery Fee
-Ramyeon|6|2|84
-Topoki|8|3|112
-Bibimbab|4|1|56
-Kimchi|2|5|28
-Total Price: 330
-Routes:
-To store,[[15, 15], [16, 15], [17, 15], [18, 15], [19, 15], [20, 15], [21, 15], [22, 15], [23, 15], [23, 14], [23, 13], [23, 12], [23, 11], [23, 10]]
-To user,[[23, 9], [22, 9], [21, 9], [20, 9], [19, 9], [18, 9], [17, 9], [16, 9], [15, 9], [14, 9], [13, 9], [12, 9], [11, 9], [10, 9]]
+To store,[[9, 11], [8, 11], [7, 11], [7, 10], [7, 9]]
+To user,[[7, 8], [8, 8], [9, 8], [10, 8], [11, 8], [12, 8], [13, 8], [13, 9], [13, 10], [13, 11], [13, 12], [13, 13], [13, 14]]
 
