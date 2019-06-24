@@ -59,6 +59,9 @@ Ex: `user_history[0]`
 
 ### NameFile: go_eat_v3.rb
 
+### Update: go_eat_v3.5.rb
+- Fixes bug in closing the app
+
 ### Update: go_eat_v3.4.rb
 - Fixes bug in write history file
 
