@@ -12,6 +12,24 @@ You are going to make a command line app called “Go-Eat”. The app consists o
 - If coordinate that user give is not available, the app will generate new random coordinate
 
 ## Design Decision Explanation:
+- Using 2D Array to save the map so I have full control of all the coordinate in the array
+- Using Array to save all of the Driver Class, so I have unique id for all the drivers and I can access it with the index<br />
+Ex: `driver[0].driver_name`
+- Using Array to save all of the Store Class, aso I have unique id for all the stores and I can access it with the index<br />
+Ex: `store[0].store_menu`
+- Using Hash to save all of the menu that store have as 'store menu', because every menu has unique name as key, and the price as value<br />
+Ex: `('Shrimp' => 20, 'Meat' => 30)`
+- Using Hash to save all of the menu that user choose as 'user basket', save the menu name as key, and the quantity as value<br />
+Ex: `('Shrimp' => 2, 'Meat' => 2)`
+- So I can call the price and quantity that user order in one code with menu name as the key
+- Save all of the user order, like menu name, quantity, price and delivery fee as an Array so it has index that always incremental<br />
+Ex: `order[['Shrimp',20,2,60],['Meat',30,2,60]]
+- Save all the order information as an Array that contain 'choosen driver name','choose store name','user basket','total price'<br />
+Ex: `order_information['Upin','Hanamasa',user_basket,total_price]
+- Create the user order history with Array, so I can easily access the history from first to last order<br />
+Ex: `user_history[0]`
+- Save the taken routes by driver to the store as an Array, and to the user as an Array, and make the Hash with keys 'To Store' with values taken routes to the store, and 'To User; with values taken routes to the user
+
 
 ## Function:
 2.1 Show Map
@@ -40,6 +58,9 @@ You are going to make a command line app called “Go-Eat”. The app consists o
 ## GoEat V3
 
 ### NameFile: go_eat_v3.rb
+
+### Update: go_eat_v3.4.rb
+- Fixes bug in write history file
 
 ### Update: go_eat_v3.3.rb
 - Coordinate generator bug has been fixed
