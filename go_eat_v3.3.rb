@@ -117,9 +117,12 @@ class User
 
     #Define order menu method
     def order_menu
-        puts "Insert Menu Name|Quantity: (Shabu|2) and ok if you're done"
+        puts "Insert Menu Name|Quantity: (Shabu|2) and 'Ok' if you're done or 'Cancel' if you want to cancel the order"
         input = gets.chomp
-        while input != "ok"
+        while input.capitalize != "Ok"
+            if input.capitalize == 'Cancel'
+                exit
+            end
             order = input.split("|")
             menu = order[0].capitalize
             quantity = order[1].to_i
@@ -132,12 +135,21 @@ class User
 
     #Define show order with quantity
     def show_basket(menu,distance)
+        while @user_basket == {}
+            puts "You didn't order anything yet, please order first"
+            order_menu
+        end
         order = []
         puts "Your Basket"
         puts "Menu|Price|Quantity|Delivery Fee"
         @user_basket.each_key do |keys|
-            order << [keys, menu[keys], @user_basket[keys], menu[keys]*distance]
-            puts "#{keys}|#{menu[keys]}|#{@user_basket[keys]}|#{menu[keys]*distance}"
+            if menu[keys] == nil
+                puts "#{keys} is not available in menu and will be remove from basket"
+                @user_basket.delete(keys)
+            else
+                order << [keys, menu[keys], @user_basket[keys], menu[keys]*distance]
+                puts "#{keys}|#{menu[keys]}|#{@user_basket[keys]}|#{menu[keys]*distance}"
+            end
         end
         order
     end
@@ -160,11 +172,11 @@ class User
 
     #Ask user to finish order
     def finish_order
-        puts "Are you sure with the order?[y/n]"
+        puts "Are you sure with the order?[Y/N]"
         answer = gets.chomp
-        if answer == "y"
+        if answer.capitalize == "Y"
             output = false
-        elsif answer == "n"
+        elsif answer.capitalize == "N"
             output = true
         end
         puts "\n"
@@ -177,7 +189,7 @@ class User
         order << driver.driver_name << store.store_name << basket << total_price 
         puts "Your choosen store is #{store.store_name} and located in #{store.x_axis},#{store.y_axis}"
         puts "Your location is #{@x_axis},#{@y_axis} and distance to the store is #{distance}"
-        puts "Your driver name is #{driver.driver_name} with rating #{driver.average_rating} and located in #{driver.x_axis},#{driver.y_axis}"
+        puts "Your driver name is #{driver.driver_name} with rating #{'%.2f' %driver.average_rating} and located in #{driver.x_axis},#{driver.y_axis}"
         puts "Your order:"
         puts "Name|Price|Quantity|Delivery Fee"
         basket.each do |item|
@@ -199,6 +211,10 @@ class User
         puts "Please give rating to our driver: (0.0 - 5.0)"
         @user_basket.clear
         rating = gets.chomp.to_f
+        while rating < 0 || rating > 5.0
+            puts "Please give valid rating from 0.0 - 5.0"
+            rating = gets.chomp.to_f
+        end
         rating
     end
 
@@ -263,8 +279,14 @@ class Driver
 
     #Define generate location method
     def generate_location(map)
+        #Check valid or not
+        def valid(coordinate)
+            output = coordinate == ' ' || coordinate == '.'
+            output
+        end
+
         #If conditonal "noway"
-        while (map[@x_axis-1][@y_axis] != " " || map[@x_axis+1][@y_axis] != " " || map[@x_axis][@y_axis-1] != " " || map[@x_axis][@y_axis+1] != " " || map[@x_axis-1][@y_axis-1] != " " || map[@x_axis-1][@y_axis+1] != " " || map[@x_axis+1][@y_axis-1] != " " || map[@x_axis+1][@y_axis+1] != " ") || (map[@x_axis][@y_axis] != " ")
+        while (!valid(map[@x_axis-1][@y_axis]) || !valid(map[@x_axis+1][@y_axis]) || !valid(map[@x_axis][@y_axis-1]) || !valid(map[@x_axis][@y_axis+1]) || !valid(map[@x_axis-1][@y_axis-1]) || !valid(map[@x_axis-1][@y_axis+1]) || !valid(map[@x_axis+1][@y_axis-1]) || !valid(map[@x_axis+1][@y_axis+1])) || (map[@x_axis][@y_axis] != " ")
             @x_axis = rand(1..map.size-2)
             @y_axis = rand(1..map.size-2)
         end
@@ -275,65 +297,167 @@ class Driver
     end
 
     #Routes taken by driver
-    def take_route(store,user)
-        starting_point_x = @x_axis
-        starting_point_y = @y_axis
-        store_routes = []
-        #Drive to the store
-        puts "Driver is on the way to the store, start at #{@x_axis},#{@y_axis}"
-        while @x_axis != store.x_axis
-            store_routes << [@x_axis,@y_axis]
-            if @x_axis > store.x_axis
-                @x_axis -= 1
-            elsif @x_axis < store.x_axis
-                @x_axis += 1
-            end
-            puts "go to #{@x_axis},#{@y_axis}"
+    def take_route(store,user,map)
+
+        #Create validation from the coordinate function
+        def valid(a,v,r,c)
+            output = r>=0 && r < a.size && c>=0 && c < a.size && a[r][c] && (v[r][c] == 0)
+            output
         end
-        while @y_axis != store.y_axis
-            store_routes << [@x_axis,@y_axis]
-            if @y_axis > store.y_axis
-                @y_axis -= 1
-            elsif @y_axis < store.y_axis
-                @y_axis += 1
+
+        #Initialize empty array for BFS Method
+        routes = []
+
+        #Initialize core map and size
+        a = map[0..map.size-1][0..map.size-1]
+        n = a.size
+        m = a.size
+
+        #Create r and c arrays which are used to access the adjacent elements
+        r = [1,-1,0,0]
+        c = [0,0,1,-1]
+
+        #Create source and destination coordinate
+        si = @x_axis
+        sj = @y_axis
+
+        di = store.x_axis
+        dj = store.y_axis
+
+        #To the store
+        #Create array as queue for BFS
+        q = []
+
+        #Create an matrix to store wheter the node is visited or not
+        v = Array.new(n) { Array.new(m,0) }
+
+        #Mark the starting point as visited
+        v[si][sj] = 1
+
+        #Push the starting point to the queue with distance 0
+        q.push([si,sj,0])
+
+        #Initialize min_dist variable to a maximum value
+        min_dist = 1<<64
+
+        #While queue q is not empty dequeue the starting node in the queue
+        while (q != nil) do
+            #Pop the node
+            tq = q.shift
+
+            #Insert the coordinate that taken to the array
+            routes << [tq[0],tq[1],tq[2]]
+
+            #If the current position same with the destination break
+            if tq[0] == di && tq[1] == dj
+                min_dist = tq[2]
+                break
             end
-            if @y_axis == store.y_axis
-                puts "go to #{@x_axis},#{@y_axis}, driver arrived at the store!"
-            else
-                puts "go to #{@x_axis},#{@y_axis}"
+
+            #Push the adjacent elements into the queue and repeat the process
+            for k in 0...4
+                if valid(a,v,tq[0]+r[k],tq[1]+c[k])
+                    v[tq[0]+r[k]][tq[1]+c[k]] = 1
+                    q.push([tq[0]+r[k],tq[1]+c[k],tq[2]+1])
+                end
             end
         end
 
-        user_routes = []
-        #Driver to the user
-        puts "Driver has bought the items, start at #{@x_axis},#{@y_axis}"
-        while @x_axis != user.x_axis
-            user_routes << [@x_axis,@y_axis]
-            if @x_axis > user.x_axis
-                @x_axis -= 1
-            elsif @x_axis < user.x_axis
-                @x_axis += 1
+        #Create all needed array
+        routes_taken = []
+        routes = routes.reverse
+        parent = [di,dj,min_dist]
+
+        #Save the routes takaen to the array
+        for i in 0..routes.size-1
+            if routes[i][2] == parent[2]-1 && (routes[i][0] == parent[0]-1 || routes[i][0] == parent[0]+1 || routes[i][0] == parent[0]) && (routes[i][1] == parent[1]-1 || routes[i][1] == parent[1]+1 || routes[i][1] == parent[1])
+                routes_taken << [routes[i][0],routes[i][1]]
+                parent = [routes[i][0],routes[i][1],routes[i][2]]
             end
-            puts "go to #{@x_axis},#{@y_axis}"
         end
-        while @y_axis != user.y_axis
-            user_routes << [@x_axis,@y_axis]
-            if @y_axis > user.y_axis
-                @y_axis -= 1
-            elsif @y_axis < user.y_axis
-                @y_axis += 1
-            end
-            if @y_axis == user.y_axis
-                puts "go to #{@x_axis},#{@y_axis}, driver arrived at your place!"
+
+        #Print the information of the routes taken
+        store_taken_routes = []
+        routes_taken.reverse.each do |route|
+            if route[0] == si && route[1] == sj
+                puts "driver is on the way to the store, start at (#{route[0]},#{route[1]})"
             else
-                puts "go to #{@x_axis},#{@y_axis}"
+                puts "go to (#{route[0]},#{route[1]})"
+            end
+            store_taken_routes << [route[0],route[1]]
+        end
+        puts "go to (#{di},#{dj}), driver arrived at the store!"
+        store_taken_routes << [di,dj]
+
+        #To the user
+        routes = []
+
+        a = map[0..map.size-1][0..map.size-1]
+        n = a.size
+        m = a.size
+        
+        r = [1,-1,0,0]
+        c = [0,0,1,-1]
+
+        si = store.x_axis
+        sj = store.y_axis
+
+        di = user.x_axis
+        dj = user.y_axis
+
+        q = []
+
+        v = Array.new(n) { Array.new(m,0) }
+        v[si][sj] = 1
+
+        q.push([si,sj,0])
+
+        min_dist = 1<<64
+
+        while (q != nil) do
+            tq = q.shift
+
+            routes << [tq[0],tq[1],tq[2]]
+
+            if tq[0] == di && tq[1] == dj
+                min_dist = tq[2]
+                break
+            end
+
+            for k in 0...4
+                if valid(a,v,tq[0]+r[k],tq[1]+c[k])
+                    v[tq[0]+r[k]][tq[1]+c[k]] = 1
+                    q.push([tq[0]+r[k],tq[1]+c[k],tq[2]+1])
+                end
             end
         end
+
+        routes_taken = []
+        routes = routes.reverse
+        parent = [di,dj,min_dist]
+
+        for i in 0..routes.size-1
+            if routes[i][2] == parent[2]-1 && (routes[i][0] == parent[0]-1 || routes[i][0] == parent[0]+1 || routes[i][0] == parent[0]) && (routes[i][1] == parent[1]-1 || routes[i][1] == parent[1]+1 || routes[i][1] == parent[1])
+                routes_taken << [routes[i][0],routes[i][1]]
+                parent = [routes[i][0],routes[i][1],routes[i][2]]
+            end
+        end
+
+        user_taken_routes = []
+        routes_taken.reverse.each do |route|
+            if route[0] == si && route[1] == sj
+                puts "driver has bought the item(s), start at (#{route[0]},#{route[1]})"
+            else
+                puts "go to (#{route[0]},#{route[1]})"
+            end
+            user_taken_routes << [route[0],route[1]]
+        end
+        puts "go to (#{di},#{dj}), driver arrived at your place!"
+        user_taken_routes << [di,dj]
+
         puts "\n"
-        routes_taken = {"To store" => store_routes, "To user" => user_routes}
-        @x_axis = starting_point_x
-        @y_axis = starting_point_y
-        routes_taken
+        all_routes_taken = {"To store" => store_taken_routes, "To user" => user_taken_routes}
+        all_routes_taken
     end
 
     #Get rating from user
@@ -346,7 +470,7 @@ class Driver
         @average_rating
     end
 
-        
+     
 end
 
 class Store
@@ -362,8 +486,14 @@ class Store
 
     #Define generate location method
     def generate_location(map)
+        #Check valid or not
+        def valid(coordinate)
+            output = coordinate == ' ' || coordinate == '.'
+            output
+        end
+
         #If conditonal "noway"
-        while (map[@x_axis-1][@y_axis] != " " || map[@x_axis+1][@y_axis] != " " || map[@x_axis][@y_axis-1] != " " || map[@x_axis][@y_axis+1] != " " || map[@x_axis-1][@y_axis-1] != " " || map[@x_axis-1][@y_axis+1] != " " || map[@x_axis+1][@y_axis-1] != " " || map[@x_axis+1][@y_axis+1] != " ") || (map[@x_axis][@y_axis] != " ")
+        while (!valid(map[@x_axis-1][@y_axis]) || !valid(map[@x_axis+1][@y_axis]) || !valid(map[@x_axis][@y_axis-1]) || !valid(map[@x_axis][@y_axis+1]) || !valid(map[@x_axis-1][@y_axis-1]) || !valid(map[@x_axis-1][@y_axis+1]) || !valid(map[@x_axis+1][@y_axis-1]) || !valid(map[@x_axis+1][@y_axis+1])) || (map[@x_axis][@y_axis] != " ")
             @x_axis = rand(1..map.size-2)
             @y_axis = rand(1..map.size-2)
         end
@@ -394,6 +524,10 @@ end
 
 def generate_user(map_size,*coordinate)
     if coordinate != []
+        while coordinate[0] > map_size || coordinate[1] > map_size
+            coordinate[0] = rand(1..map_size)
+            coordinate[1] = rand(1..map_size)
+        end
         user = User.new(coordinate[0],coordinate[1])
     else
         user = User.new(rand(1..map_size),rand(1..map_size))
@@ -476,8 +610,12 @@ def read_map_size(file)
     map_size
 end
 
-def generate_user_with_data(file)
+def generate_user_with_data(file,map_size)
     coordinate = file.gets.chomp.split(",")
+    while coordinate[0].to_i > map_size || coordinate[1].to_i > map_size
+        coordinate[0] = rand(1..map_size)
+        coordinate[1] = rand(1..map_size)
+    end
     user = User.new(coordinate[0].to_i,coordinate[1].to_i)
     user
 end
@@ -487,10 +625,14 @@ def read_drivers_total(file)
     drivers_total
 end
 
-def generate_drivers_with_data(total,file)
+def generate_drivers_with_data(total,file,map_size)
     drivers = Array.new(total)
     for i in 0..total-1
         driver_data = file.gets.chomp.split(",")
+        while driver_data[1].to_i > map_size || driver_data[2].to_i > map_size
+            driver_data[1] = rand(1..map_size)
+            driver_data[2] = rand(1..map_size)
+        end
         drivers[i] = Driver.new(driver_data[0].capitalize,driver_data[1].to_i,driver_data[2].to_i)
     end
     drivers
@@ -501,12 +643,15 @@ def read_stores_total(file)
     stores_total
 end
 
-def generate_stores_with_data(total,file)
+def generate_stores_with_data(total,file,map_size)
     stores = Array.new(total)
     for i in 0..total-1
         store_data = file.gets.chomp.split(",")
+        while store_data[1].to_i > map_size || store_data[2].to_i > map_size
+            store_data[1] = rand(1..map_size)
+            store_data[2] = rand(1..map_size)
+        end
         stores[i] = Store.new(store_data[0].capitalize,store_data[1].to_i,store_data[2].to_i)
-        #puts "#{stores[i].store_name},#{stores[i].x_axis},#{stores[i].y_axis}"
         store_menu_total = file.gets.chomp.to_i
         menus = {}
         for j in 0..store_menu_total-1
@@ -552,18 +697,17 @@ elsif options[:input_file] #If file as arguments
     user_map = map.map
 
     #Define user
-    user = generate_user_with_data(file)
+    user = generate_user_with_data(file,map_size)
     user_map = user.generate_location(user_map)
 
     #Define drivers
     total_drivers = read_drivers_total(file)
-    drivers = generate_drivers_with_data(total_drivers,file)
+    drivers = generate_drivers_with_data(total_drivers,file,map_size)
     user_map = generate_driver_location(drivers,user_map)
-    puts user_map.size
 
     #Define stores
     total_stores = read_stores_total(file)
-    stores = generate_stores_with_data(total_stores,file)
+    stores = generate_stores_with_data(total_stores,file,map_size)
     user_map = generate_store_location(stores,user_map)
 
     #Close file
@@ -632,7 +776,7 @@ while repeat_order
     user_order_history = user.insert_to_history(user_fix_order)
     
     #Show routes taken by driver
-    routes_taken = choosen_driver.take_route(choosen_store,user)
+    routes_taken = choosen_driver.take_route(choosen_store,user,user_map)
     
     #Ask user for rating
     given_rating = user.give_rating
@@ -641,8 +785,9 @@ while repeat_order
     choosen_driver_rating = choosen_driver.get_rating(given_rating)
     
     #Check the average rating of all drivers
-    user_map = check_driver_rating_map(drivers, user_map)
+    user_map = check_driver_rating_map(drivers,user_map)
     drivers = check_driver_rating_driver(drivers)
+ 
     
     #Repeat order
     repeat_order = ask_repeat_order

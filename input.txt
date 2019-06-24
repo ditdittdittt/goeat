@@ -1,21 +1,21 @@
 25
-10,10
+27,27
 4
-Spiderman,9,10
-Captain America,11,10
-Black Panther,10,9
-Black Widow,10,11
+Spiderman,29,25
+Captain America,5,26
+Black Panther,26,30
+Black Widow,9,25
 3
-Sushi Tei,24,24
+Sushi Tei,1,1
 2
 Ikan Kembung,25
 Ikan Laut,20
-Yoshinoya,13,15
+Yoshinoya,1,25
 3
 Tempura,9
 Ebi Furai,11
 Yakiniku,13
-Mujigae,23,9
+Mujigae,25,1
 4
 Ramyeon,6
 Topoki,8

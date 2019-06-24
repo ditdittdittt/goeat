@@ -8,6 +8,10 @@ You are going to make a command line app called “Go-Eat”. The app consists o
 - If store or user has no way condition, tha app will generate new random coordinate inside the map
 - Order history will be generated once the app is closed
 - Output histoy file will be generated every app's session
+- Driver using BFS for the routes taken to the store and user
+- If coordinate that user give is not available, the app will generate new random coordinate
+
+## Design Decision Explanation:
 
 ## Function:
 2.1 Show Map
@@ -31,9 +35,20 @@ You are going to make a command line app called “Go-Eat”. The app consists o
 2.3 View History
 - After the app is close, the app will display all the order history
 
+# Version Control:
+
 ## GoEat V3
 
 ### NameFile: go_eat_v3.rb
+
+### Update: go_eat_v3.3.rb
+- Coordinate generator bug has been fixed
+- BFS Method bug has been fixed
+
+### Update: go_eat_v3.2.rb
+- Case senstive bug fixed
+- What if analysis has been applied
+- Driver using BFS method to take routes to the store and user, so there no will be 'crash'
 
 ### Update: go_eat_v3.1.rb
 - Case sensitive in menu order fixed to not sensitive
