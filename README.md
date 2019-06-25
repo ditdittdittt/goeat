@@ -24,9 +24,9 @@ Ex: `('Shrimp' => 20, 'Meat' => 30)`
 Ex: `('Shrimp' => 2, 'Meat' => 2)`
 - So I can call the price and quantity that user order in one code with menu name as the key
 - Save all of the user order, like menu name, quantity, price and delivery fee as an Array so it has index that always incremental<br />
-Ex: `order[['Shrimp',20,2,60],['Meat',30,2,60]]
+Ex: `order[['Shrimp',20,2,60],['Meat',30,2,60]]`
 - Save all the order information as an Array that contain 'choosen driver name','choose store name','user basket','total price'<br />
-Ex: `order_information['Upin','Hanamasa',user_basket,total_price]
+Ex: `order_information['Upin','Hanamasa',user_basket,total_price]`
 - Create the user order history with Array, so I can easily access the history from first to last order<br />
 Ex: `user_history[0]`
 - Save the taken routes by driver to the store as an Array, and to the user as an Array, and make the Hash with keys 'To Store' with values taken routes to the store, and 'To User; with values taken routes to the user
